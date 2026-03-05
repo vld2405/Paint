@@ -85,7 +85,9 @@ namespace ParametricCurves
                 puncteMatematice.Add(new Point(fx(u), fy(u)));
             }
 
-            double minX = 0, maxX = 0, minY = 0, maxY = 0;
+            double minX = 0, maxX = 0;
+            double minY = 0, maxY = 0;
+
             foreach (var p in puncteMatematice)
             {
                 if (p.X < minX) minX = p.X;
@@ -94,24 +96,34 @@ namespace ParametricCurves
                 if (p.Y > maxY) maxY = p.Y;
             }
 
-            double lățimeMatematică = maxX - minX;
-            double înălțimeMatematică = maxY - minY;
-            if (lățimeMatematică == 0) lățimeMatematică = 1;
-            if (înălțimeMatematică == 0) înălțimeMatematică = 1;
+            double latimeMatematica = maxX - minX;
+            double inaltimeMatematica = maxY - minY;
+            if (latimeMatematica == 0) latimeMatematica = 1;
+            if (inaltimeMatematica == 0) inaltimeMatematica = 1;
 
-            minX -= lățimeMatematică * 0.1;
-            maxX += lățimeMatematică * 0.1;
-            minY -= înălțimeMatematică * 0.1;
-            maxY += înălțimeMatematică * 0.1;
+            minX -= latimeMatematica * 0.1;
+            maxX += latimeMatematica * 0.1;
+            minY -= inaltimeMatematica * 0.1;
+            maxY += inaltimeMatematica * 0.1;
+
+            latimeMatematica = maxX - minX;
+            inaltimeMatematica = maxY - minY;
 
             double canvasW = DrawCanvas.ActualWidth;
             double canvasH = DrawCanvas.ActualHeight;
-            if (canvasW == 0 || canvasH == 0) return;
+            if (canvasW <= 0 || canvasH <= 0) return;
+
+            double scaleX = canvasW / latimeMatematica;
+            double scaleY = canvasH / inaltimeMatematica;
+            double scale = Math.Min(scaleX, scaleY);
+
+            double offsetX = (canvasW - latimeMatematica * scale) / 2;
+            double offsetY = (canvasH - inaltimeMatematica * scale) / 2;
 
             Func<double, double, Point> CoordEcran = (x, y) =>
             {
-                double screenX = (x - minX) / (maxX - minX) * canvasW;
-                double screenY = canvasH - (y - minY) / (maxY - minY) * canvasH;
+                double screenX = offsetX + (x - minX) * scale;
+                double screenY = offsetY + (inaltimeMatematica - (y - minY)) * scale;
                 return new Point(screenX, screenY);
             };
 
@@ -120,8 +132,8 @@ namespace ParametricCurves
             Point yAxisStart = CoordEcran(0, minY);
             Point yAxisEnd = CoordEcran(0, maxY);
 
-            DrawCanvas.Children.Add(new Line { X1 = xAxisStart.X, Y1 = xAxisStart.Y, X2 = xAxisEnd.X, Y2 = xAxisEnd.Y, Stroke = Brushes.Gray, StrokeThickness = 1 });
-            DrawCanvas.Children.Add(new Line { X1 = yAxisStart.X, Y1 = yAxisStart.Y, X2 = yAxisEnd.X, Y2 = yAxisEnd.Y, Stroke = Brushes.Gray, StrokeThickness = 1 });
+            DrawCanvas.Children.Add(new Line { X1 = xAxisStart.X, Y1 = xAxisStart.Y, X2 = xAxisEnd.X, Y2 = xAxisEnd.Y, Stroke = Brushes.Gray, StrokeThickness = 1, Opacity = 0.5 });
+            DrawCanvas.Children.Add(new Line { X1 = yAxisStart.X, Y1 = yAxisStart.Y, X2 = yAxisEnd.X, Y2 = yAxisEnd.Y, Stroke = Brushes.Gray, StrokeThickness = 1, Opacity = 0.5 });
 
             Polyline polilinie = new Polyline
             {
