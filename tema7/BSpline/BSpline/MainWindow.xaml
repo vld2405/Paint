@@ -7,6 +7,15 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <Grid>
+        <Canvas x:Name="MainCanvas" Background="White"
+            MouseLeftButtonDown="MainCanvas_MouseLeftButtonDown"
+            MouseRightButtonDown="MainCanvas_MouseRightButtonDown"
+            MouseMove="MainCanvas_MouseMove"
+            MouseLeftButtonUp="MainCanvas_MouseLeftButtonUp"/>
 
+        <StackPanel Margin="10" VerticalAlignment="Top" HorizontalAlignment="Left" IsHitTestVisible="False">
+            <TextBlock x:Name="InstructionsText" FontWeight="Bold" Foreground="DimGray"
+                   Text="Etapa I: Click Stânga pentru a adăuga n+1 puncte.&#x0a;Etapa II: Click Dreapta pentru a genera curbele B-Spline (k=1..n-1).&#x0a;După finalizare, trageți de puncte pentru actualizare."/>
+        </StackPanel>
     </Grid>
 </Window>
